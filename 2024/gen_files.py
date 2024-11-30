@@ -15,12 +15,12 @@ def create_day_folder(day_number):
 
 input = File.open(File.join(__dir__, 'input.txt')).readlines.map(&:to_s)
 
-def solve_part_1(input)
+def solve_part1(input)
     # Implement your solution here
     42
 end
 
-def solve_part_2(input)
+def solve_part2(input)
     # Implement your solution here
     42
 end
@@ -31,8 +31,8 @@ if __FILE__ == $PROGRAM_NAME
     puts 'No input found'
     exit 1
   end
-  puts "Part 1: #{solve_part_1(input)}"
-  puts "Part 2: #{solve_part_2(input)}"
+  puts "Part 1: #{solve_part1(input)}"
+  puts "Part 2: #{solve_part2(input)}"
 end
 """
         )
@@ -47,24 +47,23 @@ require 'rspec/autorun'
 require_relative '{folder_name}'
 
 RSpec.describe 'Day {day_number}' do
-  let(:sample_input) do
-    <<~INPUT
-      1abc2
-      pqr3stu8vwx
-      a1b2c3d4e5f
-      treb7uchet
-    INPUT
+  let(:sample_input1) do
+    File.open(File.join(__dir__, 'sample_input1.txt')).readlines.map(&:to_s)
+  end
+
+  let(:sample_input2) do
+    File.open(File.join(__dir__, 'sample_input2.txt')).readlines.map(&:to_s)
   end
 
   describe '#solve_part_1' do
     it 'returns the correct answer for the sample input' do
-      expect(solve_part_1(sample_input)).to eq(42)
+      expect(solve_part1(sample_input1)).to eq(42)
     end
   end
 
   describe '#solve_part_2' do
     it 'returns the correct answer for the sample input' do
-      expect(solve_part_2(sample_input)).to eq(42)
+      expect(solve_part2(sample_input1)).to eq(42)
     end
   end
 
@@ -76,6 +75,9 @@ end
     # Create an empty input.txt
     input_file_path = os.path.join(folder_name, "input.txt")
     open(input_file_path, "w").close()
+    # Create empty sample_input1.txt and sample_input2.txt files
+    open(os.path.join(folder_name, "sample_input1.txt"), "w").close()
+    open(os.path.join(folder_name, "sample_input2.txt"), "w").close()
 
 
 if __name__ == "__main__":

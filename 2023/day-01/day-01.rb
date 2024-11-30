@@ -12,7 +12,7 @@ def find_digits(line)
   digits
 end
 
-def solve_part_1(input)
+def solve_part1(input)
   total = 0
 
   input.each do |line|
@@ -56,7 +56,7 @@ def find_digits2(line)
   digits
 end
 
-def solve_part_2(input)
+def solve_part2(input)
   total = 0
 
   input.each do |line|
@@ -75,6 +75,6 @@ if __FILE__ == $PROGRAM_NAME
     puts 'No input found'
     exit 1
   end
-  puts "Part 1: #{solve_part_1(input)}"
-  puts "Part 2: #{solve_part_2(input)}"
+  puts "Part 1: #{solve_part1(input)}"
+  puts "Part 2: #{solve_part2(input)}"
 end

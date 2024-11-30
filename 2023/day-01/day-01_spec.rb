@@ -12,13 +12,13 @@ RSpec.describe 'Day 1' do
 
   describe '#solve_part_1' do
     it 'returns the correct answer for the sample input' do
-      expect(solve_part_1(sample_input1)).to eq(142)
+      expect(solve_part1(sample_input1)).to eq(142)
     end
   end
 
   describe '#solve_part_2' do
     it 'returns the correct answer for the sample input' do
-      expect(solve_part_2(sample_input2)).to eq(281)
+      expect(solve_part2(sample_input2)).to eq(281)
     end
 
     it 'solves corner cases when finding digits' do
