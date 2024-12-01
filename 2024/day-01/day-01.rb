@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 input = File.open(File.join(__dir__, 'input.txt')).readlines.map(&:to_s)
-# input = File.open(File.join(__dir__, 'sample_input1.txt')).readlines.map(&:to_s)
 
 def get_2_lists_from_input(input)
   list1 = []
@@ -31,6 +30,21 @@ def total_distance(list1, list2)
   total
 end
 
+# assume the lists are the same length and sorted
+def simularity_score(list1, list2)
+  score = 0
+  list1.each do |value|
+    count = 0
+    list2.each do |value2|
+      break if value2 > value
+
+      count += 1 if value == value2
+    end
+    score += value * count
+  end
+  score
+end
+
 def solve_part1(input)
   list1, list2 = get_2_lists_from_input(input)
   list1 = sort_list(list1)
@@ -39,8 +53,10 @@ def solve_part1(input)
 end
 
 def solve_part2(input)
-  # Implement your solution here
-  42
+  list1, list2 = get_2_lists_from_input(input)
+  list1 = sort_list(list1)
+  list2 = sort_list(list2)
+  simularity_score(list1, list2)
 end
 
 if __FILE__ == $PROGRAM_NAME
