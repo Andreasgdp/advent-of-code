@@ -14,11 +14,8 @@ def get_2_lists_from_input(input)
   [list1, list2]
 end
 
-def sort_list(list)
-  list.sort
-end
-
-# assume the lists are the same length
+# assume the lists are the same length and sorted
+# finds the total distance between the smallest values in the lists
 def total_distance(list1, list2)
   total = 0
   list1.each_with_index do |value, index|
@@ -28,6 +25,7 @@ def total_distance(list1, list2)
 end
 
 # assume the lists are the same length and sorted
+# finds the times the values in list1 are the same in list2 and multiplies by the value
 def simularity_score(list1, list2)
   score = 0
   list1.each do |value|
@@ -44,16 +42,12 @@ end
 
 def solve_part1(input)
   list1, list2 = get_2_lists_from_input(input)
-  list1 = sort_list(list1)
-  list2 = sort_list(list2)
-  total_distance(list1, list2)
+  total_distance(list1.sort, list2.sort)
 end
 
 def solve_part2(input)
   list1, list2 = get_2_lists_from_input(input)
-  list1 = sort_list(list1)
-  list2 = sort_list(list2)
-  simularity_score(list1, list2)
+  simularity_score(list1.sort, list2.sort)
 end
 
 if __FILE__ == $PROGRAM_NAME
