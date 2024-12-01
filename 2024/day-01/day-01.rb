@@ -18,14 +18,11 @@ def sort_list(list)
   list.sort
 end
 
-def abs_diff(a, b)
-  (a - b).abs
-end
-
+# assume the lists are the same length
 def total_distance(list1, list2)
   total = 0
   list1.each_with_index do |value, index|
-    total += abs_diff(value, list2[index])
+    total += (value - list2[index]).abs
   end
   total
 end
