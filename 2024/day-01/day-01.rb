@@ -1,7 +1,12 @@
 # frozen_string_literal: true
+# typed: true
+
+require 'sorbet-runtime'
+extend T::Sig
 
 input = File.open(File.join(__dir__, 'input.txt')).readlines.map(&:to_s)
 
+sig { params(input: T::Array[String]).returns([T::Array[Integer], T::Array[Integer]]) }
 def get_2_lists_from_input(input)
   list1 = []
   list2 = []
@@ -16,16 +21,18 @@ end
 
 # assume the lists are the same length and sorted
 # finds the total distance between the smallest values in the lists
+sig { params(list1: T::Array[Integer], list2: T::Array[Integer]).returns(Integer) }
 def total_distance(list1, list2)
   total = 0
   list1.each_with_index do |value, index|
-    total += (value - list2[index]).abs
+    total += (value - T.must(list2[index])).abs
   end
   total
 end
 
 # assume the lists are the same length and sorted
 # finds the times the values in list1 are the same in list2 and multiplies by the value
+sig { params(list1: T::Array[Integer], list2: T::Array[Integer]).returns(Integer) }
 def simularity_score(list1, list2)
   score = 0
   list1.each do |value|
@@ -40,11 +47,13 @@ def simularity_score(list1, list2)
   score
 end
 
+sig { params(input: T::Array[String]).returns(Integer) }
 def solve_part1(input)
   list1, list2 = get_2_lists_from_input(input)
   total_distance(list1.sort, list2.sort)
 end
 
+sig { params(input: T::Array[String]).returns(Integer) }
 def solve_part2(input)
   list1, list2 = get_2_lists_from_input(input)
   simularity_score(list1.sort, list2.sort)
