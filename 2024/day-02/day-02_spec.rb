@@ -14,13 +14,13 @@ RSpec.describe 'Day 2' do
 
   describe '#solve_part_1' do
     it 'returns the correct answer for the sample input' do
-      expect(solve_part1(sample_input1)).to eq(42)
+      expect(solve_part1(sample_input1)).to eq(2)
     end
   end
 
   describe '#solve_part_2' do
     it 'returns the correct answer for the sample input' do
-      expect(solve_part2(sample_input2)).to eq(42)
+      expect(solve_part2(sample_input2)).to eq(4)
     end
   end
 
