@@ -4,6 +4,9 @@ gen LANGUAGE YEAR DAY:
   gvm use go1.23.3
   mkdir -p {{YEAR}}/day{{DAY}}-{{LANGUAGE}}
   cp -R templates/{{LANGUAGE}}/* {{YEAR}}/day{{DAY}}-{{LANGUAGE}}
+  if [ -f ~/.config/aocd/token ]; then
+    ADVENT_OF_CODE_COOKIE=$(cat ~/.config/aocd/token)
+  fi
   curl --cookie "session=$ADVENT_OF_CODE_COOKIE" https://adventofcode.com/{{YEAR}}/day/{{DAY}}/input -o {{YEAR}}/day{{DAY}}-{{LANGUAGE}}/input.txt
   perl -i -pe 'chomp if eof' {{YEAR}}/day{{DAY}}-{{LANGUAGE}}/input.txt
   printf '* [Day {{DAY}}](https://adventofcode.com/{{YEAR}}/day/{{DAY}}): [Go]({{YEAR}}/day{{DAY}}-go/main.go)\n' | sed '55r /dev/stdin' README.md > README.tmp && mv README.tmp README.md
