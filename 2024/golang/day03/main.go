@@ -14,35 +14,28 @@ func findDoAndDontAndMulInstructions(text string) []string {
 	return matches
 }
 
-func main() {
-	// Open the input file
-	// file, err := os.Open("sample_input2.txt")
-	file, err := os.Open("input.txt")
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
-	}
-	defer file.Close()
-
-	// Scanner to read the file line by line
+func readLines(file *os.File, lines chan<- string) {
 	scanner := bufio.NewScanner(file)
-	var instructions []string
-
 	for scanner.Scan() {
-		line := scanner.Text()
-		instructions = append(instructions, findDoAndDontAndMulInstructions(line)...)
+		lines <- scanner.Text()
 	}
+	close(lines)
+}
 
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file:", err)
-		return
+func processInstructions(lines <-chan string, instructions chan<- string) {
+	for line := range lines {
+		for _, instruction := range findDoAndDontAndMulInstructions(line) {
+			instructions <- instruction
+		}
 	}
+	close(instructions)
+}
 
-	// Process the collected instructions
+func calculateTotal(instructions <-chan string, results chan<- int) {
 	total := 0
-	mulEnabled := true // mul instructions are enabled by default
+	mulEnabled := true
 
-	for _, instruction := range instructions {
+	for instruction := range instructions {
 		if instruction == "do()" {
 			mulEnabled = true
 		} else if instruction == "don't()" {
@@ -59,6 +52,26 @@ func main() {
 			}
 		}
 	}
+	results <- total
+	close(results)
+}
 
+func main() {
+	file, err := os.Open("input.txt")
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer file.Close()
+
+	lines := make(chan string)
+	instructions := make(chan string)
+	results := make(chan int)
+
+	go readLines(file, lines)
+	go processInstructions(lines, instructions)
+	go calculateTotal(instructions, results)
+
+	total := <-results
 	fmt.Println("Total:", total)
 }
