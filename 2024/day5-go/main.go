@@ -7,10 +7,10 @@ import (
 	"strings"
 )
 
-func parseInput(input io.Reader) ([]string, [][]int) {
+func parseInput(input io.Reader) ([]string, [][]string) {
 	scanner := bufio.NewScanner(input)
 	var rules []string
-	var updates [][]int
+	var updates [][]string
 	isUpdateSection := false
 
 	for scanner.Scan() {
@@ -20,13 +20,7 @@ func parseInput(input io.Reader) ([]string, [][]int) {
 			continue
 		}
 		if isUpdateSection {
-			updateNumbers := strings.Split(line, ",")
-			var update []int
-			for _, numStr := range updateNumbers {
-				num, _ := strconv.Atoi(numStr)
-				update = append(update, num)
-			}
-			updates = append(updates, update)
+			updates = append(updates, parseUpdate(line))
 		} else {
 			rules = append(rules, line)
 		}
@@ -34,44 +28,39 @@ func parseInput(input io.Reader) ([]string, [][]int) {
 	return rules, updates
 }
 
-// Update is valid if all rules are satisfied
-func isUpdateValid(rules []string, update []int) bool {
-	for _, rule := range rules {
-		ruleParts := strings.Split(rule, "|")
-		before, _ := strconv.Atoi(ruleParts[0])
-		after, _ := strconv.Atoi(ruleParts[1])
+func parseUpdate(line string) []string {
+	return strings.Split(line, ",")
+}
 
-		if !updateSatisfiesRule(update, before, after) {
+func isUpdateValid(rules []string, update []string) bool {
+	for _, rule := range rules {
+		if !updateSatisfiesRule(update, rule) {
 			return false
 		}
 	}
-
 	return true
 }
 
-func sumMiddleValueOfValidUpdates(validUpdateIndexes []int, updates [][]int) int {
-	// Sum the middle value of all valid updates
-	// The middle value is the value at the index of the middle of the update
-	// If the update has an even number of values, the middle value is the value at the index of the middle - 1
+func sumMiddleValueOfValidUpdates(validUpdateIndexes []int, updates [][]string) int {
 	sum := 0
-	for _, updateIndex := range validUpdateIndexes {
-		update := updates[updateIndex]
+	for _, idx := range validUpdateIndexes {
+		update := updates[idx]
 		middleIndex := len(update) / 2
 		if len(update)%2 == 0 {
 			middleIndex--
 		}
-		sum += update[middleIndex]
+		num, _ := strconv.Atoi(update[middleIndex])
+		sum += num
 	}
-
 	return sum
 }
 
-// A rule defines an order of what pages (number) are valid e.g. rule 77|52 means that 66 should be before 33
-// An update is e.g. 83,84,11,26,77,34,14,85,71,52,18
-// In this case the update is valid because 77 is before 52, it is not valid if there were another rule of e.g. 84|83
-func updateSatisfiesRule(update []int, before int, after int) bool {
-	index1 := -1
-	index2 := -1
+func updateSatisfiesRule(update []string, rule string) bool {
+	parts := strings.Split(rule, "|")
+	before := parts[0]
+	after := parts[1]
+
+	index1, index2 := -1, -1
 	for i, num := range update {
 		if num == before {
 			index1 = i
@@ -81,45 +70,27 @@ func updateSatisfiesRule(update []int, before int, after int) bool {
 		}
 	}
 
-	if index1 == -1 || index2 == -1 {
-		return true
-	}
-
-	return index1 < index2
+	return index1 == -1 || index2 == -1 || index1 < index2
 }
 
 func fs1(input io.Reader) int {
 	rules, updates := parseInput(input)
-	validUpdateIndexes := make([]int, 0)
+	validUpdateIndexes := []int{}
 	for i, update := range updates {
 		if isUpdateValid(rules, update) {
 			validUpdateIndexes = append(validUpdateIndexes, i)
 		}
 	}
-
 	return sumMiddleValueOfValidUpdates(validUpdateIndexes, updates)
 }
 
-func reorderUpdate(rules []string, update []int) []int {
+func reorderUpdate(rules []string, update []string) []string {
 	for {
 		allRulesSatisfied := true
 		for _, rule := range rules {
-			ruleParts := strings.Split(rule, "|")
-			before, _ := strconv.Atoi(ruleParts[0])
-			after, _ := strconv.Atoi(ruleParts[1])
-			if !updateSatisfiesRule(update, before, after) {
+			if !updateSatisfiesRule(update, rule) {
 				allRulesSatisfied = false
-				index1 := -1
-				index2 := -1
-				for i, num := range update {
-					if num == before {
-						index1 = i
-					}
-					if num == after {
-						index2 = i
-					}
-				}
-				update[index1], update[index2] = update[index2], update[index1]
+				swapUpdateElements(update, rule)
 			}
 		}
 		if allRulesSatisfied {
@@ -129,18 +100,33 @@ func reorderUpdate(rules []string, update []int) []int {
 	return update
 }
 
+func swapUpdateElements(update []string, rule string) {
+	parts := strings.Split(rule, "|")
+	before := parts[0]
+	after := parts[1]
+
+	index1, index2 := -1, -1
+	for i, num := range update {
+		if num == before {
+			index1 = i
+		}
+		if num == after {
+			index2 = i
+		}
+	}
+	update[index1], update[index2] = update[index2], update[index1]
+}
+
 func fs2(input io.Reader) int {
 	rules, updates := parseInput(input)
-	validReorderedUpdateIndexes := make([]int, 0)
+	validReorderedUpdateIndexes := []int{}
 	for i, update := range updates {
 		if !isUpdateValid(rules, update) {
 			reorderedUpdate := reorderUpdate(rules, update)
 			if isUpdateValid(rules, reorderedUpdate) {
 				validReorderedUpdateIndexes = append(validReorderedUpdateIndexes, i)
 			}
-
 		}
 	}
-
 	return sumMiddleValueOfValidUpdates(validReorderedUpdateIndexes, updates)
 }
