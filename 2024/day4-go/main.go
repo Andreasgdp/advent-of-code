@@ -1,13 +1,21 @@
 package main
 
 import (
+	"bufio"
 	"io"
-
-	aoc "github.com/teivah/advent-of-code"
 )
 
+func ReaderToStrings(input io.Reader) []string {
+	scanner := bufio.NewScanner(input)
+	var lines []string
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+	return lines
+}
+
 func fs1(input io.Reader) int {
-	grid := aoc.ReaderToStrings(input)
+	grid := ReaderToStrings(input)
 	word := "XMAS"
 	return countWordOccurrences(grid, word)
 }
@@ -50,7 +58,7 @@ func checkWord(grid []string, word string, x, y, dx, dy int) bool {
 }
 
 func fs2(input io.Reader) int {
-	grid := aoc.ReaderToStrings(input)
+	grid := ReaderToStrings(input)
 	return countXMASOccurrences(grid)
 }
 
