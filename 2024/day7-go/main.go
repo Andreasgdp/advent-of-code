@@ -84,7 +84,7 @@ func getCombinationsResults(numbers []int, operators []string) []int {
 // numbers in list must preserve order
 // ex: 190: 10 19 -> true as 10*19 = 190, while 10+19 != 190
 // ex: 3267: 81 40 27 -> true as 81+40*27 = 3267, but all other combinations are false
-func canEqTestValUsingPlusAndTimes(testVal int, numbers []int, operators []string) bool {
+func canEqTestVal(testVal int, numbers []int, operators []string) bool {
 	if len(numbers) == 1 {
 		return numbers[0] == testVal
 	}
@@ -106,7 +106,7 @@ func fs1(input io.Reader) int {
 	total := 0
 	operators := []string{"+", "*"}
 	for _, eq := range eqList {
-		if canEqTestValUsingPlusAndTimes(eq.testVal, eq.numbers, operators) {
+		if canEqTestVal(eq.testVal, eq.numbers, operators) {
 			total += eq.testVal
 		}
 	}
@@ -118,7 +118,7 @@ func fs2(input io.Reader) int {
 	total := 0
 	operators := []string{"+", "*", "||"}
 	for _, eq := range eqList {
-		if canEqTestValUsingPlusAndTimes(eq.testVal, eq.numbers, operators) {
+		if canEqTestVal(eq.testVal, eq.numbers, operators) {
 			total += eq.testVal
 		}
 	}
