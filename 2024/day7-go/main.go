@@ -9,20 +9,9 @@ import (
 )
 
 type Equation struct {
-	testVal int
 	numbers []int
+	testVal int
 }
-
-// example input
-// 190: 10 19
-// 3267: 81 40 27
-// 83: 17 5
-// 156: 15 6
-// 7290: 6 8 6 15
-// 161011: 16 10 13
-// 192: 17 8 14
-// 21037: 9 7 18 13
-// 292: 11 6 16 20
 
 // takes reader, returns slice of tuple of ( int, slice of int )
 func readInput(input io.Reader) []Equation {
@@ -52,7 +41,22 @@ func getCombinationsResults(numbers []int, operators []string) []int {
 	}
 
 	var results []int
+	var applyOperator func(a, b int, op string) int
 	var generateCombinations func(nums []int, currentResult int, index int)
+
+	applyOperator = func(before, after int, operator string) int {
+		switch operator {
+		case "+":
+			return before + after
+		case "*":
+			return before * after
+		case "||":
+			concatenated, _ := strconv.Atoi(fmt.Sprintf("%d%d", before, after))
+			return concatenated
+		default:
+			return 0
+		}
+	}
 
 	generateCombinations = func(nums []int, currentResult int, index int) {
 		if index == len(nums) {
@@ -61,27 +65,15 @@ func getCombinationsResults(numbers []int, operators []string) []int {
 		}
 
 		for _, op := range operators {
-			if op == "+" {
-				generateCombinations(nums, currentResult+nums[index], index+1)
-			} else if op == "*" {
-				generateCombinations(nums, currentResult*nums[index], index+1)
-			} else if op == "||" {
-				concatenated, _ := strconv.Atoi(fmt.Sprintf("%d%d", currentResult, nums[index]))
-				generateCombinations(nums, concatenated, index+1)
-			}
+			newResult := applyOperator(currentResult, nums[index], op)
+			generateCombinations(nums, newResult, index+1)
 		}
 	}
 
 	for i := 1; i < len(numbers); i++ {
 		for _, op := range operators {
-			if op == "+" {
-				generateCombinations(numbers, numbers[0]+numbers[i], i+1)
-			} else if op == "*" {
-				generateCombinations(numbers, numbers[0]*numbers[i], i+1)
-			} else if op == "||" {
-				concatenated, _ := strconv.Atoi(fmt.Sprintf("%d%d", numbers[0], numbers[i]))
-				generateCombinations(numbers, concatenated, i+1)
-			}
+			newResult := applyOperator(numbers[0], numbers[i], op)
+			generateCombinations(numbers, newResult, i+1)
 		}
 	}
 
@@ -99,11 +91,9 @@ func canEqTestValUsingPlusAndTimes(testVal int, numbers []int, operators []strin
 
 	// in between each number, we can either add or multiply, if one of the combinations is true, return true
 	combinations := getCombinationsResults(numbers, operators)
-	fmt.Println("testVal", testVal, "combinations", combinations)
 
 	for _, result := range combinations {
 		if result == testVal {
-			fmt.Println("result", result, "testVal", testVal)
 			return true
 		}
 	}
